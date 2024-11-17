@@ -27,9 +27,9 @@ export const MovieView = ({ movie, onBackClick }) => {
 MovieView.propTypes  = {
   movie: PropTypes.shape ({
       userId: PropTypes.number,
-      Id: PropTypes.number.isRequired,
-      Title: PropTypes.string.isRequired,
-      Author: PropTypes.string.isRequired
+      id: PropTypes.number.isRequired,
+      title: PropTypes.string.isRequired,
+      body: PropTypes.string.isRequired
 
   }) .isRequired,
   onBackClick: PropTypes.func.isRequired

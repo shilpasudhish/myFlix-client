@@ -27616,9 +27616,9 @@ _c = MovieView;
 MovieView.propTypes = {
     movie: (0, _propTypesDefault.default).shape({
         userId: (0, _propTypesDefault.default).number,
-        Id: (0, _propTypesDefault.default).number.isRequired,
-        Title: (0, _propTypesDefault.default).string.isRequired,
-        Author: (0, _propTypesDefault.default).string.isRequired
+        id: (0, _propTypesDefault.default).number.isRequired,
+        title: (0, _propTypesDefault.default).string.isRequired,
+        body: (0, _propTypesDefault.default).string.isRequired
     }).isRequired,
     onBackClick: (0, _propTypesDefault.default).func.isRequired
 };
