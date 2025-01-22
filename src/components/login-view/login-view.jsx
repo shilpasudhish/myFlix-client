@@ -1,5 +1,13 @@
 import { useState } from "react";
-
+import {
+  Form,
+  Button,
+  Card,
+  CardGroup,
+  Container,
+  Col,
+  Row,
+} from "react-bootstrap";
 function Loginview({ onLoggedIn }) {
   const [Username, setUsername] = useState("");
   const [Password, setPassword] = useState("");
@@ -40,33 +48,50 @@ function Loginview({ onLoggedIn }) {
   };
 
   return (
-    <>
-      <form onSubmit={handlesubmit}>
-        <label>
-          Username
-          <input
-            type="text"
-            value={Username}
-            onChange={(event) => {
-              setUsername(event.target.value);
-            }}
-            required
-          />
-        </label>
-        <label>
-          Password
-          <input
-            type="password"
-            value={Password}
-            onChange={(event) => {
-              setPassword(event.target.value);
-            }}
-            required
-          />
-        </label>
-        <button type="submit">Login</button>
-      </form>
-    </>
+    <Container>
+      <Row className="justify-content-md-center">
+        <Col md={6}>
+          <CardGroup>
+            <Card>
+              <Card.Header as="h5" className="text-center">
+                Login
+              </Card.Header>
+              <Card.Body>
+                <Form onSubmit={handlesubmit}>
+                  <Form.Group controlId="formUsername">
+                    <Form.Label>Username:</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={Username}
+                      onChange={(event) => setUsername(event.target.value)}
+                      required
+                      minLength={5}
+                      placeholder="Enter your username"
+                    />
+                  </Form.Group>
+                  <Form.Group controlId="formPassword">
+                    <Form.Label>Password:</Form.Label>
+                    <Form.Control
+                      type="password"
+                      value={Password}
+                      onChange={(event) => {
+                        setPassword(event.target.value);
+                      }}
+                      required
+                      placeholder="Enter your password"
+                    />
+                  </Form.Group>
+
+                  <Button variant="primary" type="submit">
+                    Login
+                  </Button>
+                </Form>
+              </Card.Body>
+            </Card>
+          </CardGroup>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 
