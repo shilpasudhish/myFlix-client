@@ -4,7 +4,7 @@ import { MovieView } from "../MovieView/movie-view";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Button, Col, Row, Container } from "react-bootstrap";
 import { Navigationbar } from "../navigation-bar/navigation-bar";
-import Profileview from "../profile-view/profile-view";
+import ProfileView from "../profile-view/profile-view";
 import Loginview from "../login-view/login-view";
 import Signupview from "../signup-view/signup-view";
 
@@ -36,6 +36,81 @@ export const MainView = () => {
     setToken(null);
     localStorage.clear();
   };
+  const addFavorite = (movieId) => {
+    if (!user) {
+      console.error("User is not defined!");
+      return;
+    }
+
+    // Ensure favorites is an array, even if it's undefined or not an array
+    const favorites = Array.isArray(user.favorites) ? user.favorites : [];
+
+    // Optimistic update: immediately update favoriteMovies state and user state
+    const updatedFavorites = [...favorites, movieId];
+    const updatedUser = { ...user, favorites: updatedFavorites };
+    setUser(updatedUser);
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+
+    fetch(
+      `https://movie-flex-api-95d248252fac.herokuapp.com/users/${user.username}/movies/${movieId}`,
+      {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to add favorite");
+        }
+        return response.json();
+      })
+      .then(() => {
+        alert("Movie added to favorites!");
+      })
+      .catch((error) => {
+        console.error("Failed to add favorite:", error);
+        alert("Failed to add movie to favorites.");
+        // Revert optimistic update in case of failure
+        setUser(user); // Restore previous user state
+      });
+  };
+
+  const removeFavorite = (movieId) => {
+    if (!user) {
+      console.error("User is not defined!");
+      return;
+    }
+
+    // Optimistic update: immediately update favoriteMovies state and user state
+    const updatedFavorites = user.favorites.filter(
+      (movie) => movie !== movieId
+    );
+    const updatedUser = {
+      ...user,
+      favorites: updatedFavorites,
+    };
+    setUser(updatedUser);
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+
+    fetch(
+      `https://movie-flex-api-95d248252fac.herokuapp.com/users/${user.username}/movies/${movieId}`,
+      {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    )
+      .then((response) => response.json())
+      .then(() => {
+        alert("Movie removed from favorites!");
+      })
+      .catch((error) => {
+        console.error("Failed to remove favorite:", error);
+        alert("Failed to remove movie from favorites.");
+        // Revert optimistic update in case of failure
+        setUser(user); // Restore previous user state
+        localStorage.setItem("user", JSON.stringify(user)); // Restore in localStorage
+      });
+  };
 
   return (
     <BrowserRouter>
@@ -56,6 +131,8 @@ export const MainView = () => {
                     onLoggedIn={(user, token) => {
                       setUser(user);
                       setToken(token);
+                      localStorage.setItem("user", JSON.stringify(user));
+                      localStorage.setItem("token", token);
                     }}
                   />
                 ) : (
@@ -64,11 +141,32 @@ export const MainView = () => {
               }
             />
             <Route
+              path="/profile"
+              element={
+                user ? (
+                  <ProfileView
+                    user={user}
+                    token={token}
+                    movies={movies}
+                    setUser={setUser}
+                  />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
+
+            <Route
               path="/movies/:movieId"
               element={
                 user ? (
                   movies.length > 0 ? (
-                    <MovieView movies={movies} />
+                    <MovieView
+                      movies={movies}
+                      user={user}
+                      token={token}
+                      setUser={setUser}
+                    />
                   ) : (
                     <div>Loading movies...</div>
                   )
@@ -82,16 +180,23 @@ export const MainView = () => {
               path="/"
               element={
                 user ? (
-                  movies.length > 0 ? (
+                  movies.length === 0 ? (
+                    <div>Loading movies...</div>
+                  ) : (
                     <Row className="g-4">
                       {movies.map((movie) => (
-                        <Col key={movie.id} md={3}>
-                          <MovieCard movie={movie} />
+                        <Col key={movie._id} md={3}>
+                          <MovieCard
+                            movie={movie}
+                            user={user}
+                            token={token}
+                            setUser={setUser}
+                            addFavorite={addFavorite} // Pass addFavorite here
+                            removeFavorite={removeFavorite}
+                          />
                         </Col>
                       ))}
                     </Row>
-                  ) : (
-                    <Col>The list is empty!</Col>
                   )
                 ) : (
                   <Navigate to="/login" replace />

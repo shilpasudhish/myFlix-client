@@ -23,12 +23,16 @@ export const Navigationbar = ({ user, onLogout }) => {
           ) : (
             <>
               <Nav.Link as={Link} to="/">
-                Home
+                Movies
               </Nav.Link>
               <Nav.Link as={Link} to="/profile">
                 Profile
               </Nav.Link>
-              <Button variant="outline-light" onClick={onLogout}>
+              <Button
+                variant="outline-light"
+                onClick={onLogout}
+                className="ms-2"
+              >
                 Logout
               </Button>
             </>
