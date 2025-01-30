@@ -81,7 +81,6 @@ const ProfileView = ({ user, token, movies, setUser }) => {
       return;
     }
 
-    // Optimistic update: immediately update favoriteMovies state and user state
     const updatedFavorites = [...user.favorites, movieId];
     const updatedUser = { ...user, favorites: updatedFavorites };
     setUser(updatedUser);
@@ -110,26 +109,23 @@ const ProfileView = ({ user, token, movies, setUser }) => {
       .catch((error) => {
         console.error("Failed to add favorite:", error);
         alert("Failed to add movie to favorites.");
-        // Revert optimistic update in case of failure
         setUser(user); // Restore previous user state
         setFavoriteMovies(favoriteMovies); // Restore previous favorite movies state
       });
   };
 
-  // Remove a movie from the user's favorites
   const removeFavorite = (movieId) => {
     if (!user) {
       console.error("User is not defined!");
       return;
     }
 
-    // Optimistic update: immediately update favoriteMovies state and user state
     const updatedFavorites = favoriteMovies.filter(
       (movie) => movie._id !== movieId
     );
     const updatedUser = {
       ...user,
-      favorites: updatedFavorites.map((m) => m._id), // Only store IDs
+      favorites: updatedFavorites.map((m) => m._id),
     };
     setUser(updatedUser);
     setFavoriteMovies(updatedFavorites);
@@ -149,13 +145,11 @@ const ProfileView = ({ user, token, movies, setUser }) => {
       .catch((error) => {
         console.error(error);
         alert("Failed to remove movie from favorites.");
-        // Revert optimistic update in case of failure
-        setUser(user); // Restore previous user state
-        setFavoriteMovies(favoriteMovies); // Restore previous favorite movies state
+        setUser(user);
+        setFavoriteMovies(favoriteMovies);
       });
   };
 
-  // Check if user is undefined before rendering
   if (!user) {
     return <p>Loading profile...</p>;
   }
@@ -212,7 +206,7 @@ const ProfileView = ({ user, token, movies, setUser }) => {
                   variant="primary"
                   type="submit"
                   className="mt-2"
-                  disabled={loading} // Disable button while loading
+                  disabled={loading}
                 >
                   {loading ? "Updating..." : "Update"}
                 </Button>
@@ -220,7 +214,7 @@ const ProfileView = ({ user, token, movies, setUser }) => {
                   variant="danger"
                   className="mt-2 ms-2"
                   onClick={handleDelete}
-                  disabled={loading} // Disable button while loading
+                  disabled={loading}
                 >
                   {loading ? "Deleting..." : "Deregister"}
                 </Button>
@@ -237,11 +231,11 @@ const ProfileView = ({ user, token, movies, setUser }) => {
             <Col key={movie._id} md={3}>
               <MovieCard
                 movie={movie}
-                user={user} // Now using the user prop
-                token={token} // Using the token prop
-                setUser={setUser} // Using the setUser prop
-                addFavorite={addFavorite} // Pass addFavorite as prop
-                removeFavorite={removeFavorite} // Pass removeFavorite as prop
+                user={user}
+                token={token}
+                setUser={setUser}
+                addFavorite={addFavorite}
+                removeFavorite={removeFavorite}
               />
             </Col>
           ))

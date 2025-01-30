@@ -11,15 +11,12 @@ export const MovieCard = ({
   addFavorite,
   removeFavorite,
 }) => {
-  // Check if user or movie is undefined
   if (!user) {
     return <p>Loading user data...</p>;
   }
 
-  // Ensure favorites is always an array
   const favorites = Array.isArray(user.favorites) ? user.favorites : [];
 
-  // Check if movie is in favorites
   const isFavorite = favorites.includes(String(movie._id));
   console.log(`Checking if movie ${movie._id} is in favorites:`, isFavorite);
 
@@ -42,17 +39,14 @@ export const MovieCard = ({
           throw new Error("Failed to update favorite list.");
         }
 
-        // Update the favorites list based on the operation
         const updatedFavorites = isFavorite
           ? favorites.filter((m) => m !== movie._id)
           : [...favorites, movie._id];
 
-        // Update the user state and localStorage only after the response is valid
         const updatedUser = { ...user, favorites: updatedFavorites };
         setUser(updatedUser);
         localStorage.setItem("user", JSON.stringify(updatedUser));
 
-        // Show the success alert after everything is done
         alert(
           isFavorite
             ? `${movie.title} removed from favorites!`
@@ -104,9 +98,9 @@ export const MovieCard = ({
         variant={isFavorite ? "danger" : "outline-primary"}
         onClick={() => {
           if (isFavorite) {
-            removeFavorite(movie._id); // Call removeFavorite when already a favorite
+            removeFavorite(movie._id);
           } else {
-            addFavorite(movie._id); // Call addFavorite when not a favorite
+            addFavorite(movie._id);
           }
         }}
         className="btn-heart"

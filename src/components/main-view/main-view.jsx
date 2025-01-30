@@ -42,10 +42,8 @@ export const MainView = () => {
       return;
     }
 
-    // Ensure favorites is an array, even if it's undefined or not an array
     const favorites = Array.isArray(user.favorites) ? user.favorites : [];
 
-    // Optimistic update: immediately update favoriteMovies state and user state
     const updatedFavorites = [...favorites, movieId];
     const updatedUser = { ...user, favorites: updatedFavorites };
     setUser(updatedUser);
@@ -70,8 +68,8 @@ export const MainView = () => {
       .catch((error) => {
         console.error("Failed to add favorite:", error);
         alert("Failed to add movie to favorites.");
-        // Revert optimistic update in case of failure
-        setUser(user); // Restore previous user state
+
+        setUser(user);
       });
   };
 
@@ -81,7 +79,6 @@ export const MainView = () => {
       return;
     }
 
-    // Optimistic update: immediately update favoriteMovies state and user state
     const updatedFavorites = user.favorites.filter(
       (movie) => movie !== movieId
     );
@@ -106,9 +103,9 @@ export const MainView = () => {
       .catch((error) => {
         console.error("Failed to remove favorite:", error);
         alert("Failed to remove movie from favorites.");
-        // Revert optimistic update in case of failure
-        setUser(user); // Restore previous user state
-        localStorage.setItem("user", JSON.stringify(user)); // Restore in localStorage
+
+        setUser(user);
+        localStorage.setItem("user", JSON.stringify(user));
       });
   };
 
@@ -191,7 +188,7 @@ export const MainView = () => {
                             user={user}
                             token={token}
                             setUser={setUser}
-                            addFavorite={addFavorite} // Pass addFavorite here
+                            addFavorite={addFavorite}
                             removeFavorite={removeFavorite}
                           />
                         </Col>
