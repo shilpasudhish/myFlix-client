@@ -5,7 +5,6 @@ import { MovieCard } from "../movie-card/movie-card";
 const ProfileView = ({ user, token, movies, setUser }) => {
   const [updatedUser, setUpdatedUser] = useState({
     username: user?.username || "",
-    password: "",
     email: user?.email || "",
     birthday: user?.birthday || "",
   });
@@ -38,8 +37,18 @@ const ProfileView = ({ user, token, movies, setUser }) => {
       .then((response) => response.json())
       .then((updatedUserData) => {
         alert("Profile updated successfully!");
-        setUser(updatedUserData); // Update the user state
-        localStorage.setItem("user", JSON.stringify(updatedUserData)); // Store in localStorage
+        // Re-fetch user data to make sure the favorites are up to date
+        fetch(
+          `https://movie-flex-api-95d248252fac.herokuapp.com/users/${updatedUserData.username}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        )
+          .then((response) => response.json())
+          .then((newUser) => {
+            setUser(newUser); // Update the user state
+            localStorage.setItem("user", JSON.stringify(newUser)); // Update in localStorage
+          });
       })
       .catch((error) => {
         console.error(error);
