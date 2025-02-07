@@ -7,7 +7,7 @@ import { Navigationbar } from "../navigation-bar/navigation-bar";
 import ProfileView from "../profile-view/profile-view";
 import Loginview from "../login-view/login-view";
 import Signupview from "../signup-view/signup-view";
-
+import "./main-view.scss";
 export const MainView = () => {
   const [movies, setMovies] = useState([]);
   const [user, setUser] = useState(
@@ -126,23 +126,6 @@ export const MainView = () => {
 
       <Container>
         <Row className="justify-content-md-center">
-          <Form.Group controlId="genreFilter" className="mb-3">
-            <Form.Label>Select Genre</Form.Label>
-            <Form.Control
-              as="select"
-              onChange={handleGenreChange}
-              value={genrefilter}
-            >
-              <option value="">All Genres</option>
-              <option value="Action">Action</option>
-              <option value="Drama">Drama</option>
-              <option value="Sci-Fi">Sci-Fi</option>
-              <option value="Crime">Crime</option>
-              <option value="Romance">Romance</option>
-              <option value="Thriller">Thriller</option>
-              {/* Add more genres as needed */}
-            </Form.Control>
-          </Form.Group>
           <Routes>
             <Route
               path="/signup"
@@ -208,20 +191,47 @@ export const MainView = () => {
                   movies.length === 0 ? (
                     <div>Loading movies...</div>
                   ) : (
-                    <Row className="g-4">
-                      {filterMovies(movies).map((movie) => (
-                        <Col key={movie._id} md={3}>
-                          <MovieCard
-                            movie={movie}
-                            user={user}
-                            token={token}
-                            setUser={setUser}
-                            addFavorite={addFavorite}
-                            removeFavorite={removeFavorite}
-                          />
-                        </Col>
-                      ))}
-                    </Row>
+                    <div>
+                      {/* Genre Selection */}
+                      <div className="genre-filter">
+                        <label htmlFor="genreFilter">Select Genre: </label>
+                        <select
+                          id="genreFilter"
+                          value={genrefilter}
+                          onChange={(e) => setGenrefilter(e.target.value)}
+                        >
+                          <option value="">All Genres</option>
+                          {/* Render the list of genres dynamically */}
+                          {movies
+                            .map((movie) => movie.genre.name)
+                            .filter(
+                              (value, index, self) =>
+                                self.indexOf(value) === index
+                            ) // Remove duplicates
+                            .map((genre, index) => (
+                              <option key={index} value={genre}>
+                                {genre}
+                              </option>
+                            ))}
+                        </select>
+                      </div>
+
+                      {/* Movie Cards */}
+                      <Row className="g-4">
+                        {filterMovies(movies).map((movie) => (
+                          <Col key={movie._id} md={3}>
+                            <MovieCard
+                              movie={movie}
+                              user={user}
+                              token={token}
+                              setUser={setUser}
+                              addFavorite={addFavorite}
+                              removeFavorite={removeFavorite}
+                            />
+                          </Col>
+                        ))}
+                      </Row>
+                    </div>
                   )
                 ) : (
                   <Navigate to="/login" replace />
