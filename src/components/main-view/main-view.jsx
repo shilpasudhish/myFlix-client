@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { MovieCard } from "../movie-card/movie-card";
 import { MovieView } from "../MovieView/movie-view";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { Button, Col, Row, Container } from "react-bootstrap";
+import { Form, Button, Col, Row, Container } from "react-bootstrap";
 import { Navigationbar } from "../navigation-bar/navigation-bar";
 import ProfileView from "../profile-view/profile-view";
 import Loginview from "../login-view/login-view";
@@ -14,6 +14,7 @@ export const MainView = () => {
     JSON.parse(localStorage.getItem("user")) || null
   );
   const [token, setToken] = useState(localStorage.getItem("token") || null);
+  const [genrefilter, setGenrefilter] = useState("");
   const urlAPI = "https://movie-flex-api-95d248252fac.herokuapp.com/movies";
 
   useEffect(() => {
@@ -35,6 +36,16 @@ export const MainView = () => {
     setUser(null);
     setToken(null);
     localStorage.clear();
+  };
+  const filterMovies = (movies) => {
+    return movies.filter((movie) => {
+      return genrefilter
+        ? movie.genre.name.toLowerCase().includes(genrefilter.toLowerCase())
+        : true;
+    });
+  };
+  const handleGenreChange = (event) => {
+    setGenrefilter(event.target.value); // Update genre filter state
   };
   const addFavorite = (movieId) => {
     if (!user) {
@@ -115,6 +126,23 @@ export const MainView = () => {
 
       <Container>
         <Row className="justify-content-md-center">
+          <Form.Group controlId="genreFilter" className="mb-3">
+            <Form.Label>Select Genre</Form.Label>
+            <Form.Control
+              as="select"
+              onChange={handleGenreChange}
+              value={genrefilter}
+            >
+              <option value="">All Genres</option>
+              <option value="Action">Action</option>
+              <option value="Drama">Drama</option>
+              <option value="Sci-Fi">Sci-Fi</option>
+              <option value="Crime">Crime</option>
+              <option value="Romance">Romance</option>
+              <option value="Thriller">Thriller</option>
+              {/* Add more genres as needed */}
+            </Form.Control>
+          </Form.Group>
           <Routes>
             <Route
               path="/signup"
@@ -181,7 +209,7 @@ export const MainView = () => {
                     <div>Loading movies...</div>
                   ) : (
                     <Row className="g-4">
-                      {movies.map((movie) => (
+                      {filterMovies(movies).map((movie) => (
                         <Col key={movie._id} md={3}>
                           <MovieCard
                             movie={movie}
